@@ -1,0 +1,281 @@
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-rails
+  - rubocop-performance
+  - rubocop-rspec
+
+# Merge Exclude declarations in this file with the defaults from rubocop/rubocop-rails
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "Brewfile"
+    - "db/schema.rb"
+    - "db/child_progress_primary_schema.rb"
+    - "db/events_schema.rb"
+
+## Enable Rails cops
+Rails:
+  Enabled: true
+
+# Configuration parameters: Include, TreatCommentsAsGroupSeparators.
+# Include: **/Gemfile, **/gems.rb
+Bundler/OrderedGems:
+  Exclude:
+    - "Gemfile"
+
+## TODO: Refactor
+Rails/HasAndBelongsToMany:
+  Exclude:
+    - "app/models/test_device.rb"
+
+Rails/ApplicationController:
+  Enabled: false
+
+## Rubcop doesn't play nice with ActiveRecords multi-db support
+Rails/ApplicationRecord:
+  Exclude:
+    - "app/models/child_interaction_record.rb"
+    - "app/models/event_record.rb"
+
+Rails/EnvironmentVariableAccess:
+  Enabled: false
+
+# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
+# URISchemes: http, https
+Layout/LineLength:
+  AutoCorrect: true
+  AllowURI: true
+
+##
+## Explicit configuration
+##
+
+
+# Lint/AmbiguousBlockAssociation is enabled by default but the "official" guideline is to disable it for RSpec:
+# https://github.com/rubocop-hq/rubocop/issues/4222#issuecomment-290655562
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*"
+
+Naming/BlockForwarding:
+  EnforcedStyle: explicit
+
+# Disable rule since it is triggered by doorkeeper
+Naming/InclusiveLanguage:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle.
+# SupportedStyles: module_function, extend_self
+Style/ModuleFunction:
+  Enabled: true
+  EnforcedStyle: extend_self
+
+# Configuration parameters: EnforcedStyle, IndentationWidth.
+# SupportedStyles: aligned, indented, indented_relative_to_receiver
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+# Configuration parameters: Strict.
+Style/NumericLiterals:
+  Enabled: true
+  MinDigits: 15
+
+# Configuration parameters: EnforcedStyle, SupportedStyles, ConsistentQuotesInMultiline.
+# SupportedStyles: single_quotes, double_quotes
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Style/GuardClause:
+   Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles, MinSize, WordRegex.
+# SupportedStyles: percent, brackets
+Style/WordArray:
+  Enabled: true
+  MinSize: 4
+  EnforcedStyle: percent
+
+# Configuration parameters: EnforcedStyle, IndentationWidth.
+# SupportedStyles: special_inside_parentheses, consistent, align_braces
+Layout/FirstHashElementIndentation:
+  Enabled: true
+  EnforcedStyle: consistent
+
+# Configuration parameters: EmptyLineBetweenMethodDefs, EmptyLineBetweenClassDefs, EmptyLineBetweenModuleDefs
+# AllowAdjacentOneLineDefs, NumberOfEmptyLines
+Layout/EmptyLineBetweenDefs:
+  Enabled: true
+  AllowAdjacentOneLineDefs: true
+
+# Configuration parameters: .
+# SupportedStyles: percent, brackets
+Style/SymbolArray:
+  EnforcedStyle: percent
+  MinSize: 6
+
+Style/CollectionMethods:
+  Description: 'Preferred collection methods.'
+  StyleGuide: '#map-find-select-reduce-size'
+  Enabled: true
+  PreferredMethods:
+    collect: 'map'
+    collect!: 'map!'
+    inject: 'reduce'
+    detect: 'find'
+    find_all: 'select'
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false
+
+##
+## FIXME: Discuss
+##
+
+# Configuration parameters: EnforcedStyle, SupportedStyles, SingleLineConditionsOnly, IncludeTernaryExpressions.
+# SupportedStyles: assign_to_condition, assign_inside_condition
+Style/ConditionalAssignment:
+  Enabled: false
+
+# Configuration parameters: MaxLineLength.
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/StringConcatenation:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: snake_case, normalcase, non_integer
+Naming/VariableNumber:
+  Enabled: false
+
+##
+## FIXME: Ignore Code Metrics, for now.
+##
+
+# Offense count: 140
+Metrics/AbcSize:
+  Max: 176
+
+# Offense count: 269
+# Configuration parameters: CountComments, ExcludedMethods.
+Metrics/BlockLength:
+  Max: 723
+
+# Offense count: 2
+# Configuration parameters: CountBlocks.
+Metrics/BlockNesting:
+  Max: 4
+
+# Offense count: 13
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Max: 489
+
+# Offense count: 25
+Metrics/CyclomaticComplexity:
+  Max: 25
+
+# Offense count: 138
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 122
+
+# Offense count: 1
+# Configuration parameters: CountComments.
+Metrics/ModuleLength:
+  Max: 140
+
+# Offense count: 23
+Metrics/PerceivedComplexity:
+  Max: 19
+
+#
+# rubocop-rspec, our custom configuration
+#
+
+# Ignore for Rake task and connectivity example defintions.
+# We can't use IgnoredMetadata because it doesn't work with derived metadata
+#
+# Configuration parameters: IgnoredMetadata.
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/tasks/**/*'
+    - 'spec/connectivity/**/*'
+
+# Offense count: 21
+# PubSub specs can't be written to follow this cop's expectations
+RSpec/DescribeMethod:
+  Enabled: true
+  Exclude:
+    - 'spec/pubsub/**/*'
+
+# Offense count: 41
+# PubSub specs can't be written to follow this cop's expectations
+# Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
+# Include: **/*_spec*rb*, **/spec/**/*
+RSpec/FilePath:
+  Enabled: true
+  Exclude:
+    - 'spec/pubsub/**/*'
+
+# Unless this cop is updated to count statements the default limit is too low
+# See: https://github.com/rubocop-hq/rubocop-rspec/issues/249
+#      https://github.com/rubocop-hq/rubocop-rspec/issues/548
+RSpec/ExampleLength:
+  Max: 120
+
+# Configuration parameters: SkipBlocks, EnforcedStyle.
+# SupportedStyles: described_class, explicit
+RSpec/DescribedClass:
+  Enabled: true
+  EnforcedStyle: 'explicit'
+
+# rubocop-rspec incorrectly applies RSpec cops to factories, so we have to do this
+RSpec/MissingExampleGroupArgument:
+  Exclude:
+    - 'spec/factories/**/*'
+
+# rubocop-rspec incorrectly applies RSpec cops to factories, so we have to do this too
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/factories/**/*'
+
+# We often use `allow_any_instance_of` as the only way to mock third-party code
+# because we don't actually know how they are instantiated.
+RSpec/AnyInstance:
+  Enabled: false
+
+# The following files are tricky to test with `have_received`
+RSpec/MessageSpies:
+  Exclude:
+    - 'spec/lib/statsd_spec.rb'
+    - 'spec/services/users/identify_spec.rb'
+
+# We prefer the Capybara method aliases
+# This cop supposedly supports autocorrect but only one way (to RSpec names, not to Capybara)
+RSpec/Capybara/FeatureMethods:
+  EnabledMethods:
+    - feature
+    - given
+    - given!
+    - scenario
+    - background
