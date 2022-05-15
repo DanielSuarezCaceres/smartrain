@@ -13,9 +13,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&family=Signika&display=swap" rel="stylesheet">
   </head>
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
     <main class="container mx-auto mt-28 px-5 flex">
+      <%= "Logged in: #{current_user.email}"%>
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
       <%= yield %>
     </main>
   </body>
